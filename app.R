@@ -5,20 +5,80 @@ ui <- fluidPage(
 
     # Application title
     titlePanel("Running pace calculator"),
+    h4(tags$a(href = "https://www.antoinesoetewey.com/", "Antoine Soetewey")),
 
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            tags$div(
+                tags$p("Type in the distance you plan to run and the time in which you would like to run that distance to find your necessary pace."),
+                hr()
+            ),
+            radioButtons(
+                inputId = "units",
+                label = "Units:",
+                choices = c(
+                    "Kilometers" = "km",
+                    "Miles" = "mile"
+                )
+            ),
+            conditionalPanel(
+                condition = "input.units == 'km'",
+                numericInput(
+                    "distance_km",
+                    "Distance (kms):",
+                    10,
+                    min = 1,
+                    max = 1000
+                )
+            ),
+            conditionalPanel(
+                condition = "input.units == 'mile'",
+                numericInput(
+                    "distance_mile",
+                    "Distance (miles):",
+                    10,
+                    min = 1,
+                    max = 1000
+                )
+            ),
+            hr(),
+            tags$b("Time"),
+            numericInput(
+                "hours",
+                "Hours:",
+                1,
+                min = 0,
+                max = 1000
+            ),
+            numericInput(
+                "minutes",
+                "Minutes:",
+                0,
+                min = 0,
+                max = 59
+            ),
+            numericInput(
+                "seconds",
+                "Seconds:",
+                0,
+                min = 0,
+                max = 59
+            ),
+            hr(),
+            HTML('<p>Report a <a href="https://github.com/AntoineSoetewey/running-pace-calculator/issues">bug</a> or view the <a href="https://github.com/AntoineSoetewey/running-pace-calculator">code</a>. Back to <a href="https://www.antoinesoetewey.com/">antoinesoetewey.com</a> or <a href="https://statsandr.com/">statsandr.com</a>.</p>'),
         ),
 
         # Show a plot of the generated distribution
         mainPanel(
-           plotOutput("distPlot")
+            conditionalPanel(
+                condition = "input.units == 'km'",
+                uiOutput("results_km")
+            ),
+            conditionalPanel(
+                condition = "input.units == 'mile'",
+                uiOutput("results_mile")
+            )
         )
     )
 )
@@ -26,14 +86,16 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    output$results_km <- renderUI({
+        
+        # compute pace
+        time <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
+        
+        
+        # display results
+        paste0("You need to run ", " per kilometer.")
     })
+    
 }
 
 # Run the application 
