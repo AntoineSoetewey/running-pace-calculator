@@ -5,8 +5,8 @@ account: antoinesoetewey
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3772910
-bundleId: 4329958
+bundleId: 4335072
 url: https://antoinesoetewey.shinyapps.io/running-pace-calculator/
-when: 1615450826.332
+when: 1615545040.20153
 asMultiple: FALSE
 asStatic: FALSE

@@ -1,4 +1,6 @@
 library(shiny)
+library(DT)
+library(lubridate)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
@@ -11,7 +13,7 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             tags$div(
-                tags$p("Type in the distance you plan to run and the time in which you would like to run that distance to find your necessary pace."),
+                tags$p("Type in the distance you plan to run and the time in which you would like to run that distance to find your necessary pace and the splits."),
                 hr()
             ),
             radioButtons(
@@ -71,30 +73,74 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-            conditionalPanel(
-                condition = "input.units == 'km'",
-                uiOutput("results_km")
+            tags$h4("Pace"),
+            tags$text("You need to run:"),
+            tags$ul(
+                tags$li(uiOutput("results")),
+                tags$li(uiOutput("results2")),
             ),
-            conditionalPanel(
-                condition = "input.units == 'mile'",
-                uiOutput("results_mile")
-            )
+            br(),
+            tags$h4("Splits")
+            ,
+            DT::dataTableOutput("tbl")
         )
     )
 )
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-
-    output$results_km <- renderUI({
+    
+    output$results <- renderUI({
         
         # compute pace
         time_total <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
-        time <- time_total / input$distance_km
+        time <- time_total / ifelse(input$units == 'km', input$distance_km, input$distance_mile)
+        pace <- paste0(time %/% 60, ":", sprintf("%02.0f", time %% 60))
         
         # display results
-        paste0("You need to run ", time, " per kilometer.")
+        paste0(pace, ifelse(input$units == 'km', " minutes/kilometer", " minutes/mile"))
     })
+    
+    output$results2 <- renderUI({
+        
+        # compute pace
+        time_total <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
+        time_h <- time_total / 3600
+        pace <- ifelse(input$units == 'km', input$distance_km, input$distance_mile) / time_h
+        
+        # display results
+        paste0(round(pace, 2), ifelse(input$units == 'km', " kilometers/hour", " miles/hour"))
+    })
+    
+    # Data output
+    output$tbl <- DT::renderDataTable({
+        distance <- 1:ifelse(input$units == 'km', input$distance_km, input$distance_mile)
+        time_total <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
+        time <- time_total / ifelse(input$units == 'km', input$distance_km, input$distance_mile) * distance
+        td <- seconds_to_period(time)
+        
+        dat <- data.frame(
+            Distance = distance,
+            Time = ifelse(
+                day(td) > 0,
+                sprintf('%02.0f %02.0f:%02.0f:%02.0f', day(td), td@hour, minute(td), second(td)),
+                sprintf('%02.0f:%02.0f:%02.0f', td@hour, minute(td), second(td))
+            )
+        )
+        
+        DT::datatable(dat,
+                      extensions = "Buttons",
+                      options = list(
+                          lengthChange = TRUE,
+                          dom = "Blrtip",
+                          buttons = c("copy", "csv", "excel", "pdf", "print"),
+                          
+                          lengthMenu = list(c(-1, 10, 20, 50, 100), c("All", "10", "20", "50", "100"))
+                      ),
+                      rownames = FALSE,
+                      colnames = c(paste0("Distance ", ifelse(input$units == 'km', "(kms)", "(miles)")), "Time (hh:mm:ss)")
+                      )
+        })
     
 }
 
