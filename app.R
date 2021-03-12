@@ -89,11 +89,11 @@ server <- function(input, output) {
     output$results_km <- renderUI({
         
         # compute pace
-        time <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
-        
+        time_total <- sum(c(input$hours * 3600, input$minutes * 60, input$seconds), na.rm = TRUE)
+        time <- time_total / input$distance_km
         
         # display results
-        paste0("You need to run ", " per kilometer.")
+        paste0("You need to run ", time, " per kilometer.")
     })
     
 }
