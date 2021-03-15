@@ -28,11 +28,12 @@ ui <- fluidPage(
         condition = "input.units == 'km'",
         numericInput(
           "distance_km",
-          "Distance (kms):",
+          "Distance (km):",
           10,
           min = 1,
           max = 1000
-        )
+        ),
+        tags$em("A marathon is 42.195 km and a half-marathon is 21.0975 km.")
       ),
       conditionalPanel(
         condition = "input.units == 'mile'",
@@ -42,7 +43,8 @@ ui <- fluidPage(
           10,
           min = 1,
           max = 1000
-        )
+        ),
+        tags$em("A marathon is 26.2188 miles and a half-marathon is 13.1094 miles.")
       ),
       hr(),
       tags$b("Time"),
@@ -136,7 +138,7 @@ server <- function(input, output) {
         lengthMenu = list(c(-1, 10, 20, 50, 100), c("All", "10", "20", "50", "100"))
       ),
       rownames = FALSE,
-      colnames = c(paste0("Distance ", ifelse(input$units == "km", "(kms)", "(miles)")), "Time (hh:mm:ss)")
+      colnames = c(paste0("Distance ", ifelse(input$units == "km", "(km)", "(miles)")), "Time (hh:mm:ss)")
     )
   })
 }
