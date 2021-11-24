@@ -7,7 +7,7 @@ ui <- fluidPage(
 
   # Application title
   titlePanel("Running pace calculator"),
-  h4(tags$a(href = "https://www.antoinesoetewey.com/", "Antoine Soetewey")),
+  h4(tags$a(href = "https://antoinesoetewey.com/", "Antoine Soetewey")),
 
   # Sidebar with a slider input for number of bins
   sidebarLayout(
@@ -70,7 +70,7 @@ ui <- fluidPage(
         max = 59
       ),
       hr(),
-      HTML('<p>Report a <a href="https://github.com/AntoineSoetewey/running-pace-calculator/issues">bug</a> or view the <a href="https://github.com/AntoineSoetewey/running-pace-calculator">code</a>. Back to <a href="https://www.antoinesoetewey.com/">antoinesoetewey.com</a> or <a href="https://statsandr.com/">statsandr.com</a>.</p>'),
+      HTML('<p>Report a <a href="https://github.com/AntoineSoetewey/running-pace-calculator/issues">bug</a> or view the <a href="https://github.com/AntoineSoetewey/running-pace-calculator">code</a>. Back to <a href="https://antoinesoetewey.com/">antoinesoetewey.com</a> or <a href="https://statsandr.com/">statsandr.com</a>.</p>'),
     ),
 
     # Show a plot of the generated distribution
