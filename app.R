@@ -47,7 +47,7 @@ ui <- fluidPage(
         inputId = "units",
         label = "Units:",
         choices = c(
-          "Kilometers" = "km",
+          "Km" = "km",
           "Miles" = "mile"
         )
       ),
@@ -150,7 +150,7 @@ ui <- fluidPage(
         numericInput(
           "minutes_km_conv3",
           "Minutes:",
-          0,
+          5,
           min = 0,
           max = 59
         ),
@@ -169,7 +169,7 @@ ui <- fluidPage(
         numericInput(
           "minutes_mile_conv3",
           "Minutes:",
-          0,
+          8,
           min = 0,
           max = 59
         ),
@@ -265,12 +265,16 @@ ui <- fluidPage(
       br(),
       tags$ul(
         tags$li(tags$b(uiOutput("data2_conv2"))),
-      ),
+      )
     ),
     conditionalPanel(
       condition = "input.conversion == 'Pace & distance --> time'",
       tags$h4("Time"),
-      tags$text("Coming soon..."),
+      tags$text(uiOutput("data1_conv3")),
+      br(),
+      tags$ul(
+        tags$li(tags$b(uiOutput("data2_conv3"))),
+      )
     )
   )
   )
@@ -315,6 +319,33 @@ server <- function(input, output) {
     running_time_seconds <- sum(input$hours_conv2 * 60 * 60, input$minutes_conv2 * 60, input$seconds_conv2)
     total_distance <- running_time_seconds / total_time_seconds
     paste0(round(total_distance, 2), ifelse(input$units == "km", " km", " miles"))
+  })
+  
+  output$data1_conv3 <- renderUI({
+    # display data
+    paste0("If your goal is to run ",
+           ifelse(input$units == "km", paste0(input$distance_km_conv3, " km"), paste0(input$distance_mile_conv3, " miles")),
+           " at ",
+           ifelse(input$units == "km",
+                  paste0(input$minutes_km_conv3, ":", ifelse(input$seconds_km_conv3 < 10, paste0(0, input$seconds_km_conv3), input$seconds_km_conv3), "/km"),
+                  paste0(input$minutes_mile_conv3, ":", ifelse(input$seconds_mile_conv3 < 10, paste0(0, input$seconds_mile_conv3), input$seconds_mile_conv3), "/mile")),
+           ", you will need to run during "
+    )
+  })
+  
+  output$data2_conv3 <- renderUI({
+    # compute results
+    total_time_seconds_conv3 <- ifelse(input$units == "km",
+                                       sum(input$minutes_km_conv3 * 60, input$seconds_km_conv3),
+                                       sum(input$minutes_mile_conv3 * 60, input$seconds_mile_conv3))
+    seconds_conv3 <- ifelse(input$units == "km",
+                      total_time_seconds_conv3 * input$distance_km_conv3,
+                      total_time_seconds_conv3 * input$distance_mile_conv3)
+    time_conv3 <- seconds_to_period(seconds_conv3)
+    ifelse(day(time_conv3) == 0,
+    sprintf('%02d:%02d:%02d', time_conv3@hour, minute(time_conv3), second(time_conv3)),
+    sprintf('%02d %02d:%02d:%02d', day(time_conv3), time_conv3@hour, minute(time_conv3), second(time_conv3))
+    )
   })
   
   output$results_conv1 <- renderUI({
