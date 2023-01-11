@@ -1,6 +1,10 @@
 # Running pace calculator
 
-Type in the distance you plan to run and the time in which you would like to run that distance to find your necessary pace and the splits.
+This converter allows you to find:
+
+- the necessary pace and splits based on the running distance and time
+- the distance based on the pace and time
+- the time based on the pace and the distance
 
 See the Shiny app: https://antoinesoetewey.shinyapps.io/running-pace-calculator/
 
