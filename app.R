@@ -343,8 +343,8 @@ server <- function(input, output) {
                       total_time_seconds_conv3 * input$distance_mile_conv3)
     time_conv3 <- seconds_to_period(seconds_conv3)
     ifelse(day(time_conv3) == 0,
-    sprintf('%02d:%02d:%02d', time_conv3@hour, minute(time_conv3), second(time_conv3)),
-    sprintf('%02d %02d:%02d:%02d', day(time_conv3), time_conv3@hour, minute(time_conv3), second(time_conv3))
+    sprintf('%02.0f:%02.0f:%02.0f', time_conv3@hour, minute(time_conv3), second(time_conv3)),
+    sprintf('%02.0f %02.0f:%02.0f:%02.0f', day(time_conv3), time_conv3@hour, minute(time_conv3), second(time_conv3))
     )
   })
   
